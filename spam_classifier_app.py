@@ -1,23 +1,28 @@
 import streamlit as st
 import joblib
 
-# Load the trained model and vectorizer
-model = joblib.load("naive_bayes_model.pkl")
+# Load the tuned model and vectorizer
+nb_model_tuned = joblib.load("nb_model_tuned.pkl")
 vectorizer = joblib.load("tfidf_vectorizer.pkl")
 
-st.title("📱 SMS Spam Classifier")
+# Streamlit UI
+st.title("📩 Spam SMS Classifier")
+st.write("Enter an SMS message below to check if it's spam or not.")
 
-# User input
-message = st.text_area("Enter your SMS message:")
+user_input = st.text_area("Type your message here:")
 
 if st.button("Predict"):
-    if message.strip():
-        # Vectorize the input
-        msg_vector = vectorizer.transform([message])
-        prediction = model.predict(msg_vector)[0]
-        
-        # Output
-        label = "📩 Ham" if prediction == 0 else "🚨 Spam"
-        st.success(f"Prediction: {label}")
-    else:
+    if user_input.strip() == "":
         st.warning("Please enter a message.")
+    else:
+        # Transform the input using the vectorizer
+        input_transformed = vectorizer.transform([user_input])
+        
+        # Make a prediction using the tuned model
+        prediction = nb_model_tuned.predict(input_transformed)[0]
+        
+        # Determine the label
+        label = "📬 Ham (Not Spam)" if prediction == "ham" else "🚫 Spam"
+        
+        # Display the result
+        st.success(f"Prediction: **{label}**")
