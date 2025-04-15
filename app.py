@@ -1,5 +1,7 @@
 import streamlit as st
 import joblib
+joblib.dump(nb_model_tuned, "nb_model_tuned.pkl")
+joblib.dump(tfidf_vectorizer, "tfidf_vectorizer.pkl")
 
 # Load model and vectorizer
 model = joblib.load("nb_model_tuned.pkl")
