@@ -1,29 +1,22 @@
 import streamlit as st
 import joblib
-joblib.dump(nb_model_tuned, "nb_model_tuned.pkl")
-joblib.dump(tfidf_vectorizer, "tfidf_vectorizer.pkl")
 
-# Load model and vectorizer
-model = joblib.load("nb_model_tuned.pkl")
+# Load the pre-trained model and vectorizer
+model = joblib.load("naive_bayes_model.pkl")
 vectorizer = joblib.load("tfidf_vectorizer.pkl")
 
-# App title
 st.title("📱 Spam SMS Classifier")
-st.write("Enter an SMS message below and the model will classify it as spam or ham.")
 
-# Text input
-user_input = st.text_area("Enter your message here:", height=150)
+message = st.text_area("Enter your SMS message here:")
 
-if st.button("Classify"):
-    if user_input.strip() == "":
-        st.warning("Please enter a message to classify.")
+if st.button("Predict"):
+    if message.strip() == "":
+        st.warning("Please enter a message.")
     else:
-        # Transform input
-        input_transformed = vectorizer.transform([user_input])
-        prediction = model.predict(input_transformed)[0]
+        input_vector = vectorizer.transform([message])
+        prediction = model.predict(input_vector)[0]
 
-        # Display result
-        if prediction == 1:
-            st.error("🚨 This message is classified as **SPAM**.")
+        if prediction == "spam" or prediction == 1:
+            st.error("❗ This is likely a SPAM message.")
         else:
-            st.success("✅ This message is classified as **HAM** (Not Spam).")
+            st.success("✅ This message seems to be HAM (not spam).")
